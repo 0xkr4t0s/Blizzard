@@ -20,9 +20,11 @@ Requirements are in `docs/SPEC.md`, design in `docs/ARCHITECTURE.md`, and protoc
 
 - [ ] T001 Create the SwiftPM skeleton in Swift 6 mode with targets BMAPShim, RFCOMMTransport, BlizzardCore and BlizzardProbe
       plus test targets (`Package.swift`, `Sources/*`, `Tests/*`).
-- [ ] T002 [P] Add `.gitignore` (`.build/`, `.env*`, `secrets/`, `*.p12`, `*.p8`, `*.pklg`, `*.btsnoop`, `*.log`) and an MIT `LICENSE`.
-- [ ] T003 Add the submodule `Vendor/bosectl` → https://github.com/aaronsb/bosectl at `70570b29c1d3c9ba775b08a29eaea72385de27b5`
-      (v0.5.0). Check: `git -C Vendor/bosectl rev-parse HEAD`.
+- [x] T002 [P] Add `.gitignore` (`.build/`, `.env*`, `secrets/`, `*.p12`, `*.p8`, `*.pklg`, `*.btsnoop`, `*.log`) and an MIT `LICENSE`. — 2026-10-12
+      Evidence: `git status --ignored` lists `.DS_Store` files as ignored (`!!`); LICENSE is MIT, © 2026 0xkr4t0s.
+- [x] T003 Add the submodule `Vendor/bosectl` → https://github.com/aaronsb/bosectl at `70570b29c1d3c9ba775b08a29eaea72385de27b5`
+      (v0.5.0). Check: `git -C Vendor/bosectl rev-parse HEAD`. — 2026-10-12
+      Evidence: `git -C Vendor/bosectl rev-parse HEAD` → `70570b29c1d3c9ba775b08a29eaea72385de27b5`; `git -C Vendor/bosectl status --short` → empty.
 - [ ] T004 Build and run upstream C++ tests out-of-tree on macOS (`cmake -S Vendor/bosectl/cpp -B .build/bosectl &&
       cmake --build .build/bosectl && ctest --test-dir .build/bosectl`). The submodule must stay clean (`git -C Vendor/bosectl status`).
 - [ ] T005 BMAPShim compiles the vendored headers (no vendored `.cpp`). `include/bmap_shim.h` exposes `blz_abi_version()`,

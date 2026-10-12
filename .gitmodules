@@ -1,0 +1,3 @@
+[submodule "Vendor/bosectl"]
+	path = Vendor/bosectl
+	url = https://github.com/aaronsb/bosectl

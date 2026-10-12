@@ -1,0 +1,19 @@
+# Build output
+.build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Secrets (never commit)
+.env*
+secrets/
+*.p12
+*.p8
+
+# Raw Bluetooth captures and logs (may contain MACs/serials; commit only scrubbed fixtures)
+*.pklg
+*.btsnoop
+*.log
+
+# macOS
+.DS_Store
