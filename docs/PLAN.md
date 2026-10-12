@@ -18,21 +18,30 @@ Requirements are in `docs/SPEC.md`, design in `docs/ARCHITECTURE.md`, and protoc
 
 ## M0: tooling and feasibility spike
 
-- [ ] T001 Create the SwiftPM skeleton in Swift 6 mode with targets BMAPShim, RFCOMMTransport, BlizzardCore and BlizzardProbe
-      plus test targets (`Package.swift`, `Sources/*`, `Tests/*`).
+- [x] T001 Create the SwiftPM skeleton in Swift 6 mode with targets BMAPShim, RFCOMMTransport, BlizzardCore and BlizzardProbe
+      plus test targets (`Package.swift`, `Sources/*`, `Tests/*`). — 2026-10-12 c026618
+      Evidence (macOS, AppleClang 21.0.0): `swift build` → "Build complete!"; `swift run blizzard-probe --version` →
+      `blizzard-probe (BMAP shim ABI 1)`. The only warnings were `ld: warning: search path '/Library/Developer/CommandLineTools/…' not found`,
+      which come from the active Command Line Tools toolchain, not from our sources (see T018).
 - [x] T002 [P] Add `.gitignore` (`.build/`, `.env*`, `secrets/`, `*.p12`, `*.p8`, `*.pklg`, `*.btsnoop`, `*.log`) and an MIT `LICENSE`. — 2026-10-12 2c5b021
       Evidence: `git status --ignored` lists `.DS_Store` files as ignored (`!!`); LICENSE is MIT, © 2026 0xkr4t0s.
 - [x] T003 Add the submodule `Vendor/bosectl` → https://github.com/aaronsb/bosectl at `70570b29c1d3c9ba775b08a29eaea72385de27b5`
       (v0.5.0). Check: `git -C Vendor/bosectl rev-parse HEAD`. — 2026-10-12 2c5b021
       Evidence: `git -C Vendor/bosectl rev-parse HEAD` → `70570b29c1d3c9ba775b08a29eaea72385de27b5`; `git -C Vendor/bosectl status --short` → empty.
-- [ ] T004 Build and run upstream C++ tests out-of-tree on macOS (`cmake -S Vendor/bosectl/cpp -B .build/bosectl &&
-      cmake --build .build/bosectl && ctest --test-dir .build/bosectl`). The submodule must stay clean (`git -C Vendor/bosectl status`).
-- [ ] T005 BMAPShim compiles the vendored headers (no vendored `.cpp`). `include/bmap_shim.h` exposes `blz_abi_version()`,
-      and a Swift test calls it (`Sources/BMAPShim/`, `Tests/BMAPShimTests/`).
+- [x] T004 Build and run upstream C++ tests out-of-tree on macOS (`cmake -S Vendor/bosectl/cpp -B .build/bosectl &&
+      cmake --build .build/bosectl && ctest --test-dir .build/bosectl`). The submodule must stay clean (`git -C Vendor/bosectl status`). — 2026-10-12 c026618
+      Evidence (macOS, AppleClang 21.0.0): `ctest --test-dir .build/bosectl` → `1/1 Test #1: bmap_tests ... Passed`, 100% tests passed.
+      The build writes only to `.build/bosectl`. The macOS run did not record `git -C Vendor/bosectl status --porcelain`.
+- [x] T005 BMAPShim compiles the vendored headers (no vendored `.cpp`). `include/bmap_shim.h` exposes `blz_abi_version()`,
+      and a Swift test calls it (`Sources/BMAPShim/`, `Tests/BMAPShimTests/`). — 2026-10-12 c026618
+      Evidence: `swift test` → `abiVersionMatchesHeader()` and `shimABIVersionIsVisibleThroughCore()` passed. The `headerSearchPath`
+      into `Vendor/bosectl/cpp/src` from ARCHITECTURE §11 works under SwiftPM.
 - [ ] T006 Allowlist and deny-list with profiles APP, PROBE and REPLAY (`Sources/BMAPShim/allowlist.{hpp,cpp}`). There is one test per
       deny-list rule per profile (`Tests/BMAPShimTests/AllowlistTests.swift`). This task blocks T009 and everything that touches hardware.
-- [ ] T007 `CallbackTransport` and an exception-safe façade skeleton (`Sources/BMAPShim/callback_transport.hpp`,
-      `facade.cpp`). Test that a throwing or garbage link returns a status and never crashes (`Tests/BMAPShimTests/ExceptionSafetyTests.swift`).
+- [x] T007 `CallbackTransport` and an exception-safe façade skeleton (`Sources/BMAPShim/callback_transport.hpp`,
+      `facade.cpp`). Test that a throwing or garbage link returns a status and never crashes (`Tests/BMAPShimTests/ExceptionSafetyTests.swift`). — 2026-10-12 c026618
+      Evidence: `swift test` → "Test run with 15 tests in 0 suites passed" (BMAPShimTests; 24 cases including the parameterised ones).
+      The allowlist is a placeholder until T006: it allows only GET [0.1].
 - [ ] T008 [HW] Spike: open RFCOMM channel 2 from `BMAPThread` with its own run loop (Plan A). If it fails, try Plan B
       (main run loop + semaphore). Record the result in ADR-0003 and ARCHITECTURE §4 (`Sources/RFCOMMTransport/`).
 - [ ] T009 [HW] Spike: GET [0.1], then GET [0.5], on the real headset through the shim. Save
@@ -53,6 +62,8 @@ Requirements are in `docs/SPEC.md`, design in `docs/ARCHITECTURE.md`, and protoc
 - [ ] T016 [P] CI on `macos-26` (`.github/workflows/ci.yml`): `swift build`, `swift test`, bosectl `ctest`, and grep checks
       (`IOBluetooth` imported only under `Sources/RFCOMMTransport/`, and no `URLSession`/`Network`/`NWConnection` anywhere).
 - [ ] T017 [P] Enable GitHub private vulnerability reporting in the repo settings, as SECURITY.md promises.
+- [ ] T018 [P] Fix the `ld: warning: search path '/Library/Developer/CommandLineTools/…' not found` warnings on the dev Mac.
+      They go away when `xcode-select -p` points at Xcode 26 rather than the Command Line Tools. Confirm, then note it in README.
 
 **Checkpoint M0:** T009 shows a real firmware string through Swift → shim → bosectl → Swift, and the allowlist tests pass.
 ADR-0003 and ADR-0006 record the spike outcomes. If T008 Plan A and Plan B both fail, stop and revisit ADR-0003 (BLE fallback).
