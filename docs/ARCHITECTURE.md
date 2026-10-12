@@ -130,7 +130,7 @@ bool        blz_packet_allowed(blz_profile p, const uint8_t *pkt, size_t len); /
 ```
 
 Built so far (T005, T007): `blz_abi_version`, `blz_session_create`/`destroy`, `blz_init`, `blz_last_device_error` and
-`blz_last_error_message`, at `BLZ_ABI_VERSION` 1. Both enums end in a `*_MAX_ENUM = 0x7FFFFFFF` sentinel, so a value
+`blz_last_error_message`, and `blz_packet_allowed` (T006), at `BLZ_ABI_VERSION` 2. Both enums end in a `*_MAX_ENUM = 0x7FFFFFFF` sentinel, so a value
 outside the list that Swift passes in (for example from a link callback) is still a defined value of the C++ enum type.
 
 `CallbackTransport : public bmap::Transport` overrides `send_recv` and `send_recv_drain`:

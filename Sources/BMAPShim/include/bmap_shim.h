@@ -21,7 +21,7 @@ extern "C" {
 #define BLZ_NOEXCEPT
 #endif
 
-#define BLZ_ABI_VERSION 1u
+#define BLZ_ABI_VERSION 2u
 
 typedef enum blz_status {
     BLZ_OK = 0,
@@ -84,6 +84,13 @@ uint8_t blz_last_device_error(const blz_session *s) BLZ_NOEXCEPT;
  * that returned BLZ_OK. `buf` may be NULL when `cap` is 0.
  */
 size_t blz_last_error_message(const blz_session *s, char *buf, size_t cap) BLZ_NOEXCEPT;
+
+/*
+ * True if `profile` may send `pkt` (the allowlist CallbackTransport applies to every outbound packet).
+ * Pure function with no session; it exists so tests and tools can check the policy directly.
+ * Never use it to decide whether to send: every send path already checks it.
+ */
+bool blz_packet_allowed(blz_profile profile, const uint8_t *pkt, size_t len) BLZ_NOEXCEPT;
 
 #ifdef __cplusplus
 } /* extern "C" */

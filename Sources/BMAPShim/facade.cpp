@@ -139,6 +139,10 @@ blz_status blz_init(blz_session* s) noexcept {
     return guarded(s, [&] { get_frame(s, bmap::Addr{0, 1}); });
 }
 
+bool blz_packet_allowed(blz_profile profile, const uint8_t* pkt, size_t len) noexcept {
+    return blz::packet_allowed(profile, pkt, len);
+}
+
 uint8_t blz_last_device_error(const blz_session* s) noexcept {
     return s == nullptr ? 0 : s->last_device_error;
 }

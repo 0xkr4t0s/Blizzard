@@ -57,6 +57,8 @@ Requirements are in `docs/SPEC.md`, design in `docs/ARCHITECTURE.md`, and protoc
       and whether a CLI (`blizzard-probe`) gets Bluetooth access. Record in ADR-0006.
 - [ ] T014 `blizzard-probe` with `--read <b.f>`, `--sweep` (PROBE profile, GET only), `--diff <before> <after>` and `--replay`
       (REPLAY profile, see `/verify-bmap-feature`). Output is scrubbed JSON (`Sources/BlizzardProbe/`).
+      The allowlist's REPLAY profile only applies the absolute deny-list (T006). The one write per run, with `--i-understand`
+      and a capture reference, has to be enforced here.
 - [ ] T015 [HW] Run the first full sweep, commit it scrubbed under `Fixtures/lonestarr/<fw>/sweeps/`, and fill the PROTOCOL.md
       "Blizzard verified" column for every GET that answered.
 - [ ] T016 [P] CI on `macos-26` (`.github/workflows/ci.yml`): `swift build`, `swift test`, bosectl `ctest`, and grep checks

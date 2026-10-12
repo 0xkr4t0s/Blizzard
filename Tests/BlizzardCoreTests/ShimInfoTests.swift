@@ -2,5 +2,5 @@ import BlizzardCore
 import Testing
 
 @Test func shimABIVersionIsVisibleThroughCore() {
-    #expect(ShimInfo.abiVersion == 1)
+    #expect(ShimInfo.abiVersion == 2)
 }
