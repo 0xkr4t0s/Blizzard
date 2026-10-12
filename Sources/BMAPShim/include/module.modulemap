@@ -1,0 +1,4 @@
+module BMAPShim {
+    header "bmap_shim.h"
+    export *
+}
