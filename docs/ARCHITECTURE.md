@@ -129,10 +129,16 @@ size_t      blz_last_error_message(const blz_session *s, char *buf, size_t cap);
 bool        blz_packet_allowed(blz_profile p, const uint8_t *pkt, size_t len); /* for tests */
 ```
 
+Built so far (T005, T007): `blz_abi_version`, `blz_session_create`/`destroy`, `blz_init`, `blz_last_device_error` and
+`blz_last_error_message`, and `blz_packet_allowed` (T006), at `BLZ_ABI_VERSION` 2. Both enums end in a `*_MAX_ENUM = 0x7FFFFFFF` sentinel, so a value
+outside the list that Swift passes in (for example from a link callback) is still a defined value of the C++ enum type.
+
 `CallbackTransport : public bmap::Transport` overrides `send_recv` and `send_recv_drain`:
 1. Run the allowlist check for the session's profile. A denied packet throws `blz::denied_error`.
-2. Call the C function pointer with a 64 KiB stack buffer.
-3. Convert the result to `std::vector<uint8_t>`.
+2. Call the C function pointer with a 64 KiB buffer (heap-allocated, so `BMAPThread`'s stack size does not matter).
+3. A link status other than OK becomes `blz::link_error`: CONNECT, BUSY, TIMEOUT and CLOSED pass through, and anything
+   else, or a reported length larger than the buffer, becomes INTERNAL.
+4. Convert the result to `std::vector<uint8_t>`.
 
 Swift cannot subclass C++, so this class must live in C++.
 Source: [transport.h L12-18](https://github.com/aaronsb/bosectl/blob/70570b29c1d3c9ba775b08a29eaea72385de27b5/cpp/src/transport.h).

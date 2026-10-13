@@ -18,7 +18,7 @@ This directory adds to the root AGENTS.md. Design: ARCHITECTURE §3, §6 and §9
 - **Exceptions stop here.** Every `extern "C"` function body is wrapped in a single `try`, with handlers in this order:
   1. `bmap::busy_error`: it derives from `connect_error`, so catch it first.
   2. `bmap::connect_error`, `device_error` (keep `code()`), `unsupported_error` and `desync_error`.
-  3. `blz::denied_error` and `blz::parse_error`.
+  3. `blz::denied_error`, `blz::parse_error`, and `blz::link_error` (returns the link's own status).
   4. `std::invalid_argument`, then `std::exception`, then `...`.
 
   Each handler stores its message for `blz_last_error_message` and returns a `blz_status`. Swift cannot catch C++
